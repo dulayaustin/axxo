@@ -1,0 +1,17 @@
+%table.table.table-striped
+  %tbody
+    - @movies.each do |title, image|
+      %tr
+        %td
+          %h2.h2= title
+          - image.each do |image, link|
+
+            .movie_image
+              = image_tag image, class: 'img-responsive'
+
+            .button_details
+              = link_to "View Details and Download", display_visitors_path(link: link), class: 'btn btn-primary'
+
+= paginate @movies_array           
+          
+
