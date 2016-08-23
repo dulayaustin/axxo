@@ -1,17 +1,17 @@
-%table.table.table-striped
-  %tbody
-    - @movies.each do |title, image|
-      %tr
-        %td
-          %h2.h2= title
-          - image.each do |image, link|
+.row
+  .col-sm-12#display-list
+    %table.table.table-striped
+      %tbody
+        - @movies.each do |title, details|
+          %tr
+            %td.title
+              = title
+            %td.genre
+              - details[:genre].each do |genre|
+                = genre_status(genre)
+            %td.pull-right.link
+              = link_to "View Details and Download", display_visitors_path(link: details[:link]), class: 'btn btn-primary btn-sm'
 
-            .movie_image
-              = image_tag image, class: 'img-responsive'
-
-            .button_details
-              = link_to "View Details and Download", display_visitors_path(link: link), class: 'btn btn-primary'
-
-= paginate @movies_array           
-          
+    = paginate @movies_array           
+              
 
