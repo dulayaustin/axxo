@@ -1,30 +1,35 @@
 body
-  h2 
-    text-align: center
-    font-family: 'Open Sans Regular', Arial, sans-serif
-    color: #333
+  background-color: #eee
+  .entry
+    margin-top: 20px
 
-  .movie_image
-    margin-bottom: 10px
+    .movie_image
+      margin-bottom: 10px
 
-    img
-      border: 4px solid rgba(227, 223, 235, 0.53)
-      border-radius: 5px
-      
-
-  .button_details    
-    text-align: center
-    margin-bottom: 10px
-
+      img
+        border: 4px solid rgba(227, 223, 235, 0.53)
+        border-radius: 5px
+       
+    h2 
+      display: inline-block
+      text-align: center
+      font-family: 'Open Sans Regular', Arial, sans-serif
+      color: #333
+      margin: 0
+        
     .button_torrent
-      width: 400px
       background-color: #6b7383
       font-weight: bold
       font-size: 20px
+      float: right
       transition: all .3s ease-in-out
 
       &:hover
         background-color: #0368a1
+
+    .description
+      margin: 20px 0
+      color: #666
 
 #display-list
   padding: 50px

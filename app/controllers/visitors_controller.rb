@@ -1,3 +1,6 @@
+require 'nokogiri'
+require 'open-uri'
+
 class VisitorsController < ApplicationController
 
   def index
@@ -18,7 +21,7 @@ class VisitorsController < ApplicationController
         #@movies_array << @movies        
       end
     end
-    
+
     #@movies_array = Kaminari.paginate_array(@movies_array).page(params[:page]).per(3)
   end
 
@@ -28,5 +31,6 @@ class VisitorsController < ApplicationController
     @title = details.css("div.post").at_css(".post-title").text
     @image = details.css("div.post").at_css("img").attributes["src"].value
     @torrent = details.css("div.post").css("p").at_css("a").attributes["href"].value
+    @plot = details.css("div.post").css("p[align='left']").first.text
   end
 end
