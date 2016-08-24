@@ -28,9 +28,13 @@ class VisitorsController < ApplicationController
   def display
     url = params[:link]
     details = Nokogiri::HTML(open(url))
-    @title = details.css("div.post").at_css(".post-title").text
-    @image = details.css("div.post").at_css("img").attributes["src"].value
-    @torrent = details.css("div.post").css("p").at_css("a").attributes["href"].value
-    @plot = details.css("div.post").css("p[align='left']").first.text
+    details.css("div.post").each do |post|
+      @title = post.at_css(".post-title").text
+      @image = post.at_css("img").attributes["src"].value
+      @torrent = post.css("p").at_css("a").attributes["href"].value
+      @plot = post.css("p[align='left']").first.text
+      @info = post.css("p[align='left']").last.text
+      @url = post.at_css("iframe").attributes["src"].value
+    end
   end
 end

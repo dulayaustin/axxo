@@ -11,3 +11,9 @@
   
         .description
           %p= @plot
+
+          %ul
+            - description(@info).each do |info|
+              %li= info
+
+        = embed(@url)
