@@ -2,25 +2,41 @@
   .entry
     .row
       .movie_image.col-sm-12.col-md-4
-        = image_tag @image, class: 'img-responsive'
+        = image_tag @movie.image, class: 'img-responsive'
     
       .col-sm-12.col-md-8
         
         .title_header.row
-          %h2.col-md-7= @title        
+          %h2.col-md-7= @movie.title        
           .button_torrent.col-md-5
-            = link_to "Torrent Download", @torrent, class: 'btn btn-primary btn-default'
+            = link_to "Torrent Download", @movie.torrent, class: 'btn btn-primary btn-default'
             = link_to "Back", visitors_path, class: 'btn btn-primary btn-default'
   
         .description
-          %p= @plot
+          %p= @movie.plot
 
           %ul
             %li
-              IMDB Link:
-              = link_to @imdb_link, @imdb_link
-            - description(@info).each do |info|
-              %li= info
+              %strong
+                IMDB Link:
+              = link_to @movie.description.imdb, @movie.description.imdb
+            %li
+              %strong
+                Genre: 
+              - @movie.categories.each do |genre|
+                = genre.name.titleize
+            %li
+              %strong
+                Size:
+              = @movie.description.size
+            %li
+              %strong
+                Quality:
+              = @movie.description.quality
+            %li
+              %strong
+                Language:
+              = @movie.description.language
 
         .embed-responsive.embed-responsive-16by9
-          = embed(@url)
+          = embed(@movie.youtube_url)
