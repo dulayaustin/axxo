@@ -2,15 +2,16 @@
   .col-sm-12#display-list
     %table.table.table-striped
       %tbody
-        - @movies.each do |title, details|
-          %tr
-            %td.title
-              = title
-            %td.genre
-              - details[:genre].each do |genre|
-                = genre_status(genre)
-            %td.pull-right.link
-              = link_to "View Details and Download", display_visitors_path(link: details[:link]), class: 'btn btn-primary btn-sm'
+        - @movies_array.each do |movie|
+          - movie.each do |title, details|
+            %tr
+              %td.title
+                = title
+              %td.genre
+                - details[:genre].each do |genre|
+                  = genre_status(genre)
+              %td.pull-right.link
+                = link_to "View Details and Download", display_visitors_path(link: details[:link]), class: 'btn btn-primary btn-sm'
 
     //= paginate @movies_array
               

@@ -21,7 +21,9 @@ module ApplicationHelper
   end
 
   def description(info)
-    info.split("\n")
+    array = info.split("\n")
+    array.shift
+    array
   end
 
   def embed(url)

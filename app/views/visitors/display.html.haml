@@ -5,15 +5,22 @@
         = image_tag @image, class: 'img-responsive'
     
       .col-sm-12.col-md-8
-        %h2= @title
         
-        = link_to "Torrent Download", @torrent, class: 'btn btn-primary btn-sm button_torrent'
+        .title_header.row
+          %h2.col-md-7= @title        
+          .button_torrent.col-md-5
+            = link_to "Torrent Download", @torrent, class: 'btn btn-primary btn-default'
+            = link_to "Back", visitors_path, class: 'btn btn-primary btn-default'
   
         .description
           %p= @plot
 
           %ul
+            %li
+              IMDB Link:
+              = link_to @imdb_link, @imdb_link
             - description(@info).each do |info|
               %li= info
 
-        = embed(@url)
+        .embed-responsive.embed-responsive-16by9
+          = embed(@url)
