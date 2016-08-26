@@ -15,7 +15,7 @@ module ApplicationHelper
       klass = "default"
     end
 
-    content_tag :div, class: "label label-#{klass}" do
+    content_tag :span, class: "label label-#{klass}" do
       status.titleize
     end    
   end
