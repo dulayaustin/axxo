@@ -2,60 +2,72 @@ namespace :axxo do
   require 'nokogiri'
   require 'open-uri'
 
+  desc "Populate Movie table with first 3 newest movie"
+  task fetch_new_records: :environment do
+    movie = MovieScrape.new("http://axxomovies.org")
+    movie.fetch
+  end
+
   desc "Populate Movie table with title and link field, then genre to MovieCategory table from axxomovies.org"
-  task :fetch_records => :environment do
-    doc = Nokogiri::HTML(open("http://axxomovies.org")) 
-    doc.css("div.post").each do |post|
-      title = post.css(".post-title").text
-      link = post.at_css("a").attributes["href"].value
-      genre = post.css(".cats").children.collect { |x| x.name == "a" ? x.text.downcase : ""}.reject(&:blank?)
-
-      movie = Movie.find_or_create_by(title: title)
-      movie.link = link
-      movie.save!
-
-      Category.where(name: genre).each do |x|
-        MovieCategory.find_or_create_by(movie_id: movie.id, category_id: x.id)
-      end
-      print "."
+  task fetch_all_old_records: :environment do
+    doc = Nokogiri::HTML(open("http://axxomovies.org/page/20/"))
+    last_page = doc.css("div.wp-pagenavi").css('a').last.attributes["href"].value
+    last_page = last_page.split("/")
+    last_page = last_page.last.to_i
+    last_page.downto(2) do |page_number|
+      movie = MovieScrape.new("http://axxomovies.org/page/#{page_number}/")
+      movie.fetch
     end
+
+    print "."
   end
 
   desc "Populate Movie table with image, torrent, plot, youtube_url and info fields from specific movie link"
-  task :get_specific_details => :environment do 
+  task get_specific_details: :environment do 
     Movie.find_each do |movie|
-      details = Nokogiri::HTML(open(movie.link))
-      details.css("div.post").each do |post|
+      doc = Nokogiri::HTML(open(movie.link))
+      doc.css("div.post").each do |post|
         image = post.at_css("img").attributes["src"].value
         torrent = post.css("p").at_css("a").attributes["href"].value
         youtube_url = post.at_css("iframe").attributes["src"].value
         p_align = post.css("p[align='left']")
         p_text_align = post.css("p[style='text-align: left;']")
 
-        if (!p_align.first.nil? && !p_align.last.nil?)   # root page to page 15
+        if ((!p_align.first.nil?) && (!p_align.last.nil?))   # root page to page 15
           plot = p_align.first.text
           plot.slice!(0, 6)
           info = p_align.last.text
           imdb_link = p_align.last.at_css("a").attributes["href"].value
 
-        elsif (!p_text_align.first.nil? && !p_text_align.last.nil?)   # specific movie from pages 16 and above
-          plot = p_text_align.first.text    # problem on page 16 http://axxomovies.org/predator-dark-ages-2015/
-          plot.slice!(0, 6)
-          info = p_text_align.last.text
-          imdb_link = p_text_align.last.at_css("a").attributes["href"].value
+        elsif ((!p_text_align.first.nil?) && (!p_text_align.last.nil?))   # specific movie from pages 16 and above
+          if (p_text_align.first.text == "SHORT MOVIE") # page 16 http://axxomovies.org/predator-dark-ages-2015/
+            plot = p_text_align[1].text
+            plot.slice!(0, 6)
+          else
+            plot = p_text_align.first.text
+            plot.slice!(0, 6)
+          end
 
-        elsif (!post.css("p").at_css("strong").nil? && post.css("p").at_css("strong").text != "Tags: ") 
-          plot = post.css("p").at_css("strong").text        # page 1200 http://axxomovies.org/hit-list-2011/
-          plot = plot.reverse!
-          end_index = plot.index(".")
-          plot.slice!(0, end_index)
-          plot = plot.reverse!
+          if (!p_text_align.last.at_css("a").nil?) # http://axxomovies.org/retreat-2011/
+            info = p_text_align.last.text                 
+            imdb_link = p_text_align.last.at_css("a").attributes["href"].value
+          end
+
         else
-          plot = post.css("p").text.delete!("\n")   # last page http://axxomovies.org/win-win-2011/
-          plot = plot.reverse!            #
-          end_index = plot.index(".")     #  page 1000 http://axxomovies.org/chernobyl-diaries-2012/
-          plot.slice!(0, end_index)       # 
-          plot = plot.reverse!            #
+          plot = post.css("p")
+
+          if (!plot.first.text.delete("\n").empty?)
+            plot = plot.first.text.delete("\n")        
+
+          elsif (!plot[1].text.delete("\n").empty?)
+            plot = plot[1].text.delete("\n")       
+
+          elsif (!plot[2].text.delete("\n").empty?)
+            plot = plot[2].text.delete("\n")      
+
+          else                           
+            plot = post.css("div")[5].text.delete("\n")    # http://axxomovies.org/colombiana-2011-2/                                                 
+          end
         end
 
         if info           ## pages 1000 and above, no info included

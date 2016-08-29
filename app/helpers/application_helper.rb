@@ -28,7 +28,7 @@ module ApplicationHelper
 
   def embed(url)
     youtube_url = url.split("?").first
-    content_tag(:iframe, nil, src: "#{youtube_url}", allowfullscreen: "true")
+    content_tag(:iframe, nil, src: "#{youtube_url}", allowfullscreen: "true", class: "embed-responsive-item")
   end
 
 end
