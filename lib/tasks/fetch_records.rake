@@ -19,81 +19,83 @@ namespace :axxo do
       movie.fetch
       print "."
     end
-
-    
   end
 
   desc "Populate Movie table with image, torrent, plot, youtube_url and info fields from specific movie link"
   task get_specific_details: :environment do 
-    Movie.find_each do |movie|
+    Movie.without_info.find_each do |movie|
       doc = Nokogiri::HTML(open(movie.link))
       doc.css("div.post").each do |post|
-        image = post.at_css("img").attributes["src"].value
-        torrent = post.css("p").at_css("a").attributes["href"].value
-        youtube_url = post.at_css("iframe").attributes["src"].value
-        p_align = post.css("p[align='left']")
-        p_text_align = post.css("p[style='text-align: left;']")
+        begin
+          image = post.at_css("img").attributes["src"].value
+          torrent = post.css("p").at_css("a").attributes["href"].value
+          youtube_url = post.at_css("iframe").attributes["src"].value
+          p_align = post.css("p[align='left']")
+          p_text_align = post.css("p[style='text-align: left;']")
 
-        if ((!p_align.first.nil?) && (!p_align.last.nil?))   # root page to page 15
-          plot = p_align.first.text
-          plot.slice!(0, 6)
-          info = p_align.last.text
-          imdb_link = p_align.last.at_css("a").attributes["href"].value
-
-        elsif ((!p_text_align.first.nil?) && (!p_text_align.last.nil?))   # specific movie from pages 16 and above
-          if (p_text_align.first.text == "SHORT MOVIE") # page 16 http://axxomovies.org/predator-dark-ages-2015/
-            plot = p_text_align[1].text
+          if ((!p_align.first.nil?) && (!p_align.last.nil?))   # root page to page 15
+            plot = p_align.first.text
             plot.slice!(0, 6)
+            info = p_align.last.text
+            imdb_link = p_align.last.at_css("a").attributes["href"].value
+
+          elsif ((!p_text_align.first.nil?) && (!p_text_align.last.nil?))   # specific movie from pages 16 and above
+            if (p_text_align.first.text == "SHORT MOVIE") # page 16 http://axxomovies.org/predator-dark-ages-2015/
+              plot = p_text_align[1].text
+              plot.slice!(0, 6)
+            else
+              plot = p_text_align.first.text
+              plot.slice!(0, 6)
+            end
+
+            if (!p_text_align.last.at_css("a").nil?) # http://axxomovies.org/retreat-2011/
+              info = p_text_align.last.text                 
+              imdb_link = p_text_align.last.at_css("a").attributes["href"].value
+            end
+
           else
-            plot = p_text_align.first.text
-            plot.slice!(0, 6)
+            plot = post.css("p")
+
+            if (!plot.first.text.delete("\n").empty?)
+              plot = plot.first.text.delete("\n")        
+
+            elsif (!plot[1].text.delete("\n").empty?)
+              plot = plot[1].text.delete("\n")       
+
+            elsif (!plot[2].text.delete("\n").empty?)
+              plot = plot[2].text.delete("\n")      
+
+            else                           
+              plot = post.css("div")[5].text.delete("\n")    # http://axxomovies.org/colombiana-2011-2/                                                 
+            end
           end
 
-          if (!p_text_align.last.at_css("a").nil?) # http://axxomovies.org/retreat-2011/
-            info = p_text_align.last.text                 
-            imdb_link = p_text_align.last.at_css("a").attributes["href"].value
+          if info           ## pages 1000 and above, no info included
+            info = info.split("\n")
+            imdb_text = info.shift
+            genre_text = info.shift
+            size = info.shift
+            size.slice!(0, 6)
+            quality = info.shift
+            quality.slice!(0, 9)
+            language = info.shift
+            language.slice!(0, 10)
           end
 
-        else
-          plot = post.css("p")
+          movie.image = image
+          movie.torrent = torrent
+          movie.plot = plot
+          movie.youtube_url = youtube_url
+          movie.imdb = imdb_link
+          movie.size = size
+          movie.quality = quality
+          movie.language = language
+          movie.save!
 
-          if (!plot.first.text.delete("\n").empty?)
-            plot = plot.first.text.delete("\n")        
-
-          elsif (!plot[1].text.delete("\n").empty?)
-            plot = plot[1].text.delete("\n")       
-
-          elsif (!plot[2].text.delete("\n").empty?)
-            plot = plot[2].text.delete("\n")      
-
-          else                           
-            plot = post.css("div")[5].text.delete("\n")    # http://axxomovies.org/colombiana-2011-2/                                                 
-          end
+          print "."
+        rescue
+          print "F"
         end
-
-        if info           ## pages 1000 and above, no info included
-          info = info.split("\n")
-          imdb_text = info.shift
-          genre_text = info.shift
-          size = info.shift
-          size.slice!(0, 6)
-          quality = info.shift
-          quality.slice!(0, 9)
-          language = info.shift
-          language.slice!(0, 10)
-        end
-
-        movie.image = image
-        movie.torrent = torrent
-        movie.plot = plot
-        movie.youtube_url = youtube_url
-        movie.imdb = imdb_link
-        movie.size = size
-        movie.quality = quality
-        movie.language = language
-        movie.save!
-
-        print "."
       end
     end
   end

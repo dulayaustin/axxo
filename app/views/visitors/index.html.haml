@@ -2,14 +2,14 @@
   .col-sm-12#display-list
     %table.table.table-striped
       %tbody
-        / - @movies.each do |movie|          
-        /   %tr
-        /     %td.title
-        /       = movie.title
-        /     %td.genre
-        /       - movie.categories.each do |genre|
-        /         = genre_status(genre.name)
-        /     %td.pull-right.link
-        /       = link_to "View Details and Download", display_visitors_path(movie), class: 'btn btn-primary btn-sm'
+        - @movies.each do |movie|          
+          %tr
+            %td.title
+              = movie.title
+            %td.genre
+              - movie.categories.each do |genre|
+                = genre_status(genre.name)
+            %td.pull-right.link
+              = link_to "View Details and Download", display_visitors_path(movie), class: 'btn btn-primary btn-sm'
               
             
