@@ -17,9 +17,10 @@ namespace :axxo do
     last_page.downto(2) do |page_number|
       movie = MovieScrape.new("http://axxomovies.org/page/#{page_number}/")
       movie.fetch
+      print "."
     end
 
-    print "."
+    
   end
 
   desc "Populate Movie table with image, torrent, plot, youtube_url and info fields from specific movie link"
