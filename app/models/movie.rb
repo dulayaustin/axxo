@@ -4,8 +4,4 @@ class Movie < ActiveRecord::Base
 
   scope :without_info, -> {where(torrent: nil)}
 
-  validates :image, allow_blank: true, format: {
-    with: %r{\.(gif|png|jpg|jpeg)\Z}i,
-    message: 'must be a URL for GIF, PNG, JPG image'
-  }
 end
