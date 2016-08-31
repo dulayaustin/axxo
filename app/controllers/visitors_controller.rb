@@ -1,7 +1,7 @@
 class VisitorsController < ApplicationController
   before_action :set_movie, only: :display
   def index
-    doc = Nokogiri::HTML(open("http://axxomovies.org/hugo-2011"))
+    doc = Nokogiri::HTML(open("http://axxomovies.org/102-minutes-that-changed-america-2008/"))
     doc.css("div.post").each do |post|
       image = post.at_css("img").attributes["src"].value
       torrent = post.css("p").at_css("a").attributes["href"].value
@@ -24,21 +24,28 @@ class VisitorsController < ApplicationController
           if (!p_text_align.first.text.blank?)
             plot = p_text_align.first.text.strip
             plot.slice!(0, 6)
+            info = p_text_align[1].text
+            imdb_link = p_text_align.at_css("a").attributes["href"].value
 
           elsif (!p_text_align[1].text.blank?)
             plot = p_text_align[1].text.strip
             plot.slice!(0, 6)
+            info = p_text_align.last.text
+            imdb_link = p_text_align.at_css("a").attributes["href"].value
+
           else
             plot = p_text_align[2].text.strip
             plot.slice!(0, 6)
+            info = p_text_align.last.text
+            imdb_link = p_text_align.at_css("a").attributes["href"].value
           end
         end
 
         if p_style_color.last
           info = p_style_color.last.text    # http://axxomovies.org/warrior-princess-2014/
-        else
-          info = p_text_align.last.text
+          imdb_link = p_style_color.last.at_css("a").attributes["href"].value   # http://axxomovies.org/beyond-the-edge-2013/
         end
+
 
         if (!p_text_align.last.at_css("a").nil?)        # http://axxomovies.org/retreat-2011/         
           imdb_link = p_text_align.last.at_css("a").attributes["href"].value
@@ -54,11 +61,10 @@ class VisitorsController < ApplicationController
         p_elements = post.css("p")
         p_first = p_elements.first.text
         p_second = p_elements[1].text
-        p_third = p_elements[2].text
+
 
         p_first = p_first.delete("\n").strip
         p_second = p_second.delete("\n").strip
-        p_third = p_third.delete("\n").strip
 
         if (!p_first.blank?)
           plot = p_first        
@@ -66,8 +72,9 @@ class VisitorsController < ApplicationController
         elsif (!p_second.blank?)
           plot = p_second       
 
-        elsif (!p_third.blank?) # http://axxomovies.org/hugo-2011
-          plot = p_third
+        elsif (!p_elements[2].blank?) # http://axxomovies.org/hugo-2011
+          plot = p_elements[2].text
+          plot = plot.delete("\n").strip
 
         elsif (!post.at_css("pre").nil?)  # http://axxomovies.org/treasure-island-2012/
           plot = post.at_css("pre").text.split(" ")

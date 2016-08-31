@@ -6,6 +6,8 @@ namespace :axxo do
   task fetch_new_records: :environment do
     movie = MovieScrape.new("http://axxomovies.org")
     movie.fetch
+
+    print "."
   end
 
   desc "Populate Movie table with title and link field, then genre to MovieCategory table from axxomovies.org"
@@ -48,21 +50,28 @@ namespace :axxo do
               if (!p_text_align.first.text.blank?)
                 plot = p_text_align.first.text.strip
                 plot.slice!(0, 6)
+                info = p_text_align[1].text
+                imdb_link = p_text_align.at_css("a").attributes["href"].value
 
               elsif (!p_text_align[1].text.blank?)
                 plot = p_text_align[1].text.strip
                 plot.slice!(0, 6)
+                info = p_text_align.last.text
+                imdb_link = p_text_align.at_css("a").attributes["href"].value
+
               else
                 plot = p_text_align[2].text.strip
                 plot.slice!(0, 6)
+                info = p_text_align.last.text
+                imdb_link = p_text_align.at_css("a").attributes["href"].value
               end
             end
 
             if p_style_color.last
               info = p_style_color.last.text    # http://axxomovies.org/warrior-princess-2014/
-            else
-              info = p_text_align.last.text
+              imdb_link = p_style_color.last.at_css("a").attributes["href"].value   # http://axxomovies.org/beyond-the-edge-2013/
             end
+
 
             if (!p_text_align.last.at_css("a").nil?)        # http://axxomovies.org/retreat-2011/         
               imdb_link = p_text_align.last.at_css("a").attributes["href"].value
@@ -78,11 +87,10 @@ namespace :axxo do
             p_elements = post.css("p")
             p_first = p_elements.first.text
             p_second = p_elements[1].text
-            p_third = p_elements[2].text
+
 
             p_first = p_first.delete("\n").strip
             p_second = p_second.delete("\n").strip
-            p_third = p_third.delete("\n").strip
 
             if (!p_first.blank?)
               plot = p_first        
@@ -90,8 +98,9 @@ namespace :axxo do
             elsif (!p_second.blank?)
               plot = p_second       
 
-            elsif (!p_third.blank?) # http://axxomovies.org/hugo-2011
-              plot = p_third
+            elsif (!p_elements[2].blank?) # http://axxomovies.org/hugo-2011
+              plot = p_elements[2].text
+              plot = plot.delete("\n").strip
 
             elsif (!post.at_css("pre").nil?)  # http://axxomovies.org/treasure-island-2012/
               plot = post.at_css("pre").text.split(" ")
@@ -114,7 +123,7 @@ namespace :axxo do
             language = language.split(":")
             language.shift
             language = language.last.strip
-          end
+          end 
 
           movie.image = image
           movie.torrent = torrent
@@ -143,6 +152,10 @@ namespace :axxo do
 
       movie.link = url
       movie.save!
+
+      if movie.link.blank?
+        movie.destroy
+      end
 
       print "."
     end
