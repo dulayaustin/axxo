@@ -34,8 +34,8 @@ ActiveRecord::Schema.define(version: 20160831091155) do
     t.datetime "updated_at",                                    null: false
     t.string   "image"
     t.string   "torrent"
-    t.text     "plot",        limit: 65535
     t.string   "youtube_url"
+    t.text     "plot",        limit: 65535
     t.string   "imdb"
     t.string   "size"
     t.string   "quality"
