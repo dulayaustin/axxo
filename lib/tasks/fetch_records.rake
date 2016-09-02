@@ -29,6 +29,7 @@ namespace :axxo do
       begin
         movie.get_specific_details!
         movie.has_information?
+        movie.save!
         print "."
       rescue
         print "F"
@@ -39,17 +40,8 @@ namespace :axxo do
   desc "Modify error Movie link"
   task trim_movie_error_links: :environment do
     Movie.without_info.find_each do |movie|
-      url = movie.link.split("-")     
-      url.pop
-      url = url.join("-")
-
-      movie.link = url
-      movie.save!
-
-      if movie.link.blank?
-        movie.destroy
-      end
-
+      movie.trim_link
+      movie.valid_url?
       print "."
     end
   end

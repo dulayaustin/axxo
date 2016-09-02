@@ -11,5 +11,7 @@
                 = genre_status(genre.name)
             %td.pull-right.link
               = link_to "View Details and Download", display_visitors_path(movie), class: 'btn btn-primary btn-sm'
+
+    = paginate @movies
               
             

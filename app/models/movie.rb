@@ -7,7 +7,8 @@ class Movie < ActiveRecord::Base
   has_many :categories, through: :movie_categories, source: :category
 
   scope :without_torrent, -> {where(torrent: nil)}
-  scope :pending, ->{where(status: "pending")}
+  scope :pending, -> {where(status: "pending")}
+  scope :valid, -> {where(status: "passed")}
 
 
   def get_specific_details!
@@ -16,7 +17,7 @@ class Movie < ActiveRecord::Base
     self.torrent = get_source_torrent
     self.youtube_url = get_source_youtube_url
     self.status = "passed"
-    self.save!
+
   end
 
   def get_source_image
@@ -41,7 +42,6 @@ class Movie < ActiveRecord::Base
     self.size = get_source_size
     self.quality = get_source_quality
     self.language = get_source_language
-    self.save!
     
   end
 
@@ -340,6 +340,21 @@ class Movie < ActiveRecord::Base
 
   def entry
     @entry = document.css("div.entry")
+  end
+
+  def trim_link
+    url = self.link.split("-")     
+    url.pop
+    url = url.join("-")
+
+    self.link = url
+    self.save!
+  end
+
+  def valid_url?    
+    if self.link.blank?
+      self.destroy
+    end
   end
 
 
