@@ -39,7 +39,7 @@ namespace :axxo do
 
   desc "Modify error Movie link"
   task trim_movie_error_links: :environment do
-    Movie.without_info.find_each do |movie|
+    Movie.pending.find_each do |movie|
       movie.trim_link
       movie.valid_url?
       print "."
