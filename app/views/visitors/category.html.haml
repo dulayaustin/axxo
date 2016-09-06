@@ -2,7 +2,7 @@
   .col-sm-12#display-list
     %table.table.table-striped
       %tbody
-        - @category.movies.each do |movie|          
+        - @movies.each do |movie|          
           %tr
             %td.title
               = movie.title
