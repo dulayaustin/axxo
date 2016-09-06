@@ -9,6 +9,7 @@ class Movie < ActiveRecord::Base
 
   scope :pending, -> {where(status: "pending")}
   scope :valid, -> {where(status: "passed")}
+  scope :recent, -> {order('id DESC')}
   scope :without_plot, -> {where(plot: nil)}
   scope :without_info, -> {where(size: nil)}
 
@@ -83,7 +84,7 @@ class Movie < ActiveRecord::Base
 
       elsif entry.at_css("p.plotSummary").present? && entry.at_css("p.plotSummary").text.include?("Plot")  # http://axxomovies.org/girltrash-all-night-long-2014/
         plot = extract_plot("p.plotSummary", "first")
-        
+
       else
         return plot
       end
@@ -112,48 +113,48 @@ class Movie < ActiveRecord::Base
         if p_elements.first.text.include?("Plot")
           plot = extract_plot("p", "first")
 
-        else
+        elsif (!p_elements.first.text.include?("Release"))
           plot = p_elements.first.text.strip.delete("\n")
         end
 
-      elsif (!p_elements[1].text.strip.delete("\n").blank?)
+      elsif p_elements[1].present? && (!p_elements[1].text.strip.delete("\n").blank?) && (!p_elements[1].text.include?("Tags"))
         if p_elements[1].text.include?("Plot")
           plot = extract_plot("p", 1)
 
-        else
+        elsif (!p_elements[1].text.include?("Release"))
           plot = p_elements[1].text.strip.delete("\n")
         end
 
-      elsif entry.css("p")[2].present? && (!p_elements[2].text.strip.delete("\n").blank?)     # http://axxomovies.org/hugo-2011
+      elsif p_elements[2].present? && (!p_elements[2].text.strip.delete("\n").blank?) && (!p_elements[2].text.include?("Tags"))     # http://axxomovies.org/hugo-2011
         if p_elements[2].text.include?("Plot")
           plot = extract_plot("p", 2)
 
-        else
+        elsif (!p_elements[2].text.include?("Release"))
           plot = p_elements[2].text.strip.delete("\n")
         end
 
-      elsif entry.css("p")[3].present? && (!p_elements[3].text.strip.delete("\n").blank?)     # http://axxomovies.org/white-rabbit-2013/ 
+      elsif p_elements[3].present? && (!p_elements[3].text.strip.delete("\n").blank?) && (!p_elements[3].text.include?("Tags"))     # http://axxomovies.org/white-rabbit-2013/ 
         if p_elements[3].text.include?("Plot")
           plot = extract_plot("p", 3)
 
-        else
+        elsif (!p_elements[3].text.include?("Release"))
           plot = p_elements[3].text.strip.delete("\n")
         end
 
-      elsif entry.css("p")[4].present? && (!entry.css("p")[4].text.strip.delete("\n").blank?) && (!entry.css("p")[4].text.include?("Tags"))    # http://axxomovies.org/any-questions-for-ben-2012/
-        if entry.css("p")[4].text.include?("Plot")
+      elsif p_elements[4].present? && (!p_elements[4].text.strip.delete("\n").blank?) && (!p_elements[4].text.include?("Tags"))    # http://axxomovies.org/any-questions-for-ben-2012/
+        if p_elements[4].text.include?("Plot")
           plot = extract_plot("p", 4)
 
-        else
-          plot = entry.css("p")[4].text.strip.delete("\n")
+        elsif (!p_elements[4].text.include?("Release"))
+          plot = p_elements[4].text.strip.delete("\n")
         end
 
-      elsif entry.css("p")[5].present? && (!entry.css("p")[5].text.strip.delete("\n").blank?) && (!entry.css("p")[5].text.include?("Tags"))    # http://axxomovies.org/men-in-black-3-2012/
-        if entry.css("p")[5].text.include?("Plot")
+      elsif p_elements[5].present? && (!p_elements[5].text.strip.delete("\n").blank?) && (!p_elements[5].text.include?("Tags"))    # http://axxomovies.org/men-in-black-3-2012/
+        if p_elements[5].text.include?("Plot")
           plot = extract_plot("p", 5)
 
-        else
-          plot = entry.css("p")[5].text.strip.delete("\n")
+        elsif (!p_elements[5].text.include?("Release"))
+          plot = p_elements[5].text.strip.delete("\n")
         end
                                        
       elsif (!entry.css("div")[5].text.strip.delete("\n").blank?)                           

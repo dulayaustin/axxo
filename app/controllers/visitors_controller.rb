@@ -1,16 +1,15 @@
 class VisitorsController < ApplicationController
-  before_action :set_movie, only: :display
   
   def index
-    @movies = Movie.valid.page(params[:page]).per(15)
+    @movies = Movie.valid.recent.page(params[:page]).per(15)
   end
 
   def display
-    
+    @movie = Movie.find(params[:id])
   end
 
-  private
-    def set_movie
-      @movie = Movie.find(params[:id])
-    end
+  def category
+    @movies_by_category = Category.includes(:movies).where(id: params[:id])
+  end
+
 end
