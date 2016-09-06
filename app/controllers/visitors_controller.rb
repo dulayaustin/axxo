@@ -9,7 +9,7 @@ class VisitorsController < ApplicationController
   end
 
   def category
-    @movies_by_category = Category.includes(:movies).where(id: params[:id])
+    @category = Category.includes(:movies).find_by(id: params[:id]).per(15)
   end
 
 end
