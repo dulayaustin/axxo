@@ -1,0 +1,22 @@
+.container
+  .row
+    .col-sm-12#display-list
+      %table.table.table-striped
+        %tbody
+          %tr
+            %th.col-md-4 Title
+            %th.col-md-3 Genre
+            %th.col-md-5.pull-right Link
+          - @movies.each do |movie|          
+            %tr
+              %td.title.col-md-4
+                = movie.title
+              %td.genre.col-md-3
+                - movie.categories.each do |genre|
+                  = link_to genre_status(genre.name), category_visitors_path(genre.name)
+              %td.link.col-md-5.pull-right
+                = link_to "View Details and Download", display_visitors_path(movie), class: 'btn btn-primary btn-sm'
+
+      = paginate @movies
+              
+            

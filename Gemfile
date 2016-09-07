@@ -11,6 +11,7 @@ gem 'jbuilder', '~> 2.5'
 gem 'nokogiri'
 gem 'binding_of_caller'
 gem 'kaminari'
+gem 'ransack', github: 'activerecord-hackery/ransack'
 group :development, :test do
   gem 'byebug', platform: :mri
 end

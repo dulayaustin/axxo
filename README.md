@@ -47,6 +47,5 @@ Issues
 ---------------
 
 - Slow fetching records task `rake axxo:get_specific_details`
-- Slow rendering queries
-- Error views/visitors/category, association
+- Slow rendering queries, N+1 issue
 

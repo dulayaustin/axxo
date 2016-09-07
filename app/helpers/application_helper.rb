@@ -1,4 +1,5 @@
 module ApplicationHelper
+  include Ransack::Helpers::FormHelper
 
   def genre_status(status)
     if ["horror", "drama", "action", "sports"].include?(status.downcase)
