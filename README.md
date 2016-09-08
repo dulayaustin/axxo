@@ -36,11 +36,17 @@ After you pull this repo, in to your terminal go to this application directory t
 
       Then trimming error links example: **http://axxomovies.org/lockout-2012-4/** to **http://axxomovies.org/lockout-2012**
 
-      Also deleting nonexisting links like, **http://axxomovies.org/5257/**
+      Also setting sa status to **failed** for nonexisting links like, **http://axxomovies.org/5257/**
 
 6. `rake axxo:get_specific_details`
 
       Lastly get again the details of trim links
+
+
+Updating Movies
+---------------
+
+Just run this commands `rake axxo:fetch_newest_records` then `rake axxo:get_specific_details`
 
 
 Issues

@@ -19,6 +19,19 @@ namespace :axxo do
     print "."
   end
 
+  desc "Populate Movie table in newest movies"
+  task fetch_newest_records: :environment do
+    50.downto(2) do |page_number|
+      movie = MovieScrape.new("http://axxomovies.org/page/#{page_number}/")
+      movie.fetch
+      print "."
+    end
+
+    movie = MovieScrape.new("http://axxomovies.org")
+    movie.fetch
+    print "."
+  end
+
   desc "Populate Movie table with image, torrent, plot, youtube_url and info fields from specific movie link"
   task get_specific_details: :environment do 
     Movie.pending.find_each do |movie|
@@ -28,7 +41,7 @@ namespace :axxo do
         movie.save!
         print "."
       rescue
-        print "F#{movie.id} "
+        print "F"
       end
     end
   end
@@ -38,6 +51,7 @@ namespace :axxo do
     Movie.pending.find_each do |movie|
       movie.trim_link
       movie.valid_url?
+      movie.save!
       print "."
     end
   end

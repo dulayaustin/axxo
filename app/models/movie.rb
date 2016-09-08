@@ -341,13 +341,12 @@ class Movie < ActiveRecord::Base
       url = url.join("-")
 
       self.link = url
-      self.save!
     end
   end
 
   def valid_url?    
     if self.link.blank?
-      self.destroy
+      self.status = "failed"
     end
   end
 

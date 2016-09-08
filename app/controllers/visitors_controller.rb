@@ -2,7 +2,9 @@ class VisitorsController < ApplicationController
   before_action :set_search
 
   def index
-    @movies = @q.result.valid.recent.page(params[:page]).per(15)
+    @results = @search.result
+    @results = @results.valid.recent
+    @movies = @results.page(params[:page]).per(15)
   end
 
   def display
@@ -16,6 +18,6 @@ class VisitorsController < ApplicationController
 
   private
     def set_search
-      @q = Movie.ransack(params[:q])
+      @search = Movie.ransack(params[:q])
     end
 end

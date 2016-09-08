@@ -1,1 +1,6 @@
-= render 'movies'
+.container
+  .content
+    .row
+      .col-sm-12#display-list
+        %h2 Search for "#{@category.name}" category
+        = render 'movies'

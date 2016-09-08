@@ -1,1 +1,9 @@
-= render 'movies'
+.container
+  .content
+    .row
+      .col-sm-12#display-list
+        - if params[:q]
+          %h2
+            Search
+            = pluralize(@results.count, 'Result')   
+        = render 'movies'  
