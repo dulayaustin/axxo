@@ -3,7 +3,7 @@ class VisitorsController < ApplicationController
 
   def index
     @results = @search.result
-    @results = @results.valid.recent
+    @results = @results.valid.recent.rating_not_null
     @movies = @results.page(params[:page]).per(15)
   end
 
@@ -13,7 +13,15 @@ class VisitorsController < ApplicationController
 
   def category
     @category = Category.includes(:movies).find_by(name: params[:name])
-    @movies = @category.movies.valid.recent.page(params[:page]).per(15)
+    @search = @category.movies.ransack(params[:q])
+    @results = @search.result.valid.recent.rating_not_null
+    @movies = @results.page(params[:page]).per(15)
+  end
+
+  def download
+    movie = Movie.find(params[:id])
+    movie.count
+    redirect_to movie.torrent
   end
 
   private

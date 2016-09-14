@@ -8,7 +8,7 @@
         .title_header.row
           %h2.col-md-7= @movie.title        
           .button_torrent.col-md-4.col-md-offset-1
-            = link_to "Torrent Download", @movie.torrent, class: 'btn btn-primary btn-default'
+            = link_to "Torrent Download", download_visitors_path(@movie), class: 'btn btn-primary btn-default'
             = link_to "Back", :back, class: 'btn btn-primary btn-default'
   
         .description

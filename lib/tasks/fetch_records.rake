@@ -34,15 +34,16 @@ namespace :axxo do
 
   desc "Populate Movie table with image, torrent, plot, youtube_url and info fields from specific movie link"
   task get_specific_details: :environment do 
-    Movie.pending.find_each do |movie|
+    Movie.valid.with_imdb.find_each do |movie|
       begin
         movie.get_specific_details!
         movie.has_information?
         movie.save!
+        movie.imdb_rating
         print "."
       rescue
         print "F"
-      end
+      end      
     end
   end
 

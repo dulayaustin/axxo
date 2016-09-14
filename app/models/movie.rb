@@ -10,8 +10,8 @@ class Movie < ActiveRecord::Base
   scope :pending, -> {where(status: "pending")}
   scope :valid, -> {where(status: "passed")}
   scope :recent, -> {order('id DESC')}
-  scope :without_plot, -> {where(plot: nil)}
-  scope :without_info, -> {where(size: nil)}
+  scope :rating_not_null, -> {where('rating IS NOT NULL').order('rating DESC')}
+  scope :with_imdb, ->{where.not(imdb: nil)}
 
 
   def get_specific_details!
@@ -335,13 +335,11 @@ class Movie < ActiveRecord::Base
   end
 
   def trim_link
-    if entry.at_css("h1").present? && entry.at_css("h1").text.include?("Sorry")
-      url = self.link.split("-")     
-      url.pop
-      url = url.join("-")
+    url = self.link.split("-")     
+    url.pop
+    url = url.join("-")
 
-      self.link = url
-    end
+    self.link = url
   end
 
   def valid_url?    
@@ -350,5 +348,18 @@ class Movie < ActiveRecord::Base
     end
   end
 
+  def imdb_rating
+    return if rating.present?
+    if (!self.imdb.nil?)
+      doc = Nokogiri::HTML(open(self.imdb))
+      imdbRating = doc.css("div.imdbRating")
+      self.rating = imdbRating.at_css("span[itemprop='ratingValue']").text.to_f
+      self.save!
+    end
+  end
+
+  def count
+    self.increment!(:download_count)
+  end
 
 end

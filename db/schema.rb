@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160831091155) do
+ActiveRecord::Schema.define(version: 20160912071613) do
 
   create_table "categories", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string   "name"
@@ -30,17 +30,19 @@ ActiveRecord::Schema.define(version: 20160831091155) do
   create_table "movies", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string   "title"
     t.string   "link"
-    t.datetime "created_at",                                    null: false
-    t.datetime "updated_at",                                    null: false
+    t.datetime "created_at",                                       null: false
+    t.datetime "updated_at",                                       null: false
     t.string   "image"
     t.string   "torrent"
     t.string   "youtube_url"
-    t.text     "plot",        limit: 65535
+    t.text     "plot",           limit: 65535
     t.string   "imdb"
     t.string   "size"
     t.string   "quality"
     t.string   "language"
-    t.string   "status",                    default: "pending"
+    t.string   "status",                       default: "pending"
+    t.float    "rating",         limit: 24
+    t.integer  "download_count",               default: 0
   end
 
 end

@@ -3,6 +3,7 @@ Rails.application.routes.draw do
     collection do 
       get 'display/:id' => 'visitors#display', :as => 'display'
       get 'category/:name' => 'visitors#category', :as => 'category'
+      get 'download/:id' => 'visitors#download', :as => 'download'
     end
   end
   root to: 'visitors#index'
