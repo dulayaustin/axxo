@@ -26,27 +26,12 @@ After you pull this repo, in to your terminal go to this application directory t
 
 4. `rake axxo:get_specific_details`
 
-      After fetching records, this task will get the _image_, _torrent_, _youtube_url_ and also additional _information_ like plot, imdb link, size, quality and language if there has any.
+      After fetching records, this task will get the _image_, _torrent_, _youtube_url_ and also additional _information_ like plot, imdb/ratings link, size, quality and language if there has any.
+
+      Modify error links by trimming the links if it has valid or none existing link
 
       _This will take too long to finish!_
 
-5. `rake axxo:trim_movie_error_links`
-      
-      **Note:** Make sure to finish first the _get_specific_details_ task before proceeding here!
-
-      Then trimming error links example: **http://axxomovies.org/lockout-2012-4/** to **http://axxomovies.org/lockout-2012**
-
-      Also setting sa status to **failed** for nonexisting links like, **http://axxomovies.org/5257/**
-
-6. `rake axxo:get_specific_details`
-
-      Lastly get again the details of trim links
-
-
-Updating Movies
----------------
-
-Just run this commands `rake axxo:fetch_newest_records` then `rake axxo:get_specific_details`
 
 
 Issues

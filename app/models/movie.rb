@@ -11,7 +11,7 @@ class Movie < ActiveRecord::Base
   scope :valid, -> {where(status: "passed")}
   scope :recent, -> {order('id DESC')}
   scope :rating_not_null, -> {where('rating IS NOT NULL').order('rating DESC')}
-  scope :with_imdb, ->{where.not(imdb: nil)}
+
 
 
   def get_specific_details!
@@ -20,7 +20,6 @@ class Movie < ActiveRecord::Base
     self.torrent = get_source_torrent
     self.youtube_url = get_source_youtube_url
     self.status = "passed"
-
   end
 
   def get_source_image
@@ -70,7 +69,7 @@ class Movie < ActiveRecord::Base
       if p_style_text_align.first.text.include?("Plot")
         plot = extract_plot("p[style='text-align: left;']", "first")
 
-      elsif (!p_style_text_align.first.text.strip.delete("\n").blank?) && (!p_style_text_align.first.text.include?("Genre")) # http://axxomovies.org/tom-and-jerry-the-lost-dragon-2014/
+      elsif (!p_style_text_align.first.text.strip.delete("\n").blank?) && (!p_style_text_align.first.text.include?("Genre")) && (!p_style_text_align.first.text.include?("SHORT")) # http://axxomovies.org/tom-and-jerry-the-lost-dragon-2014/  # http://axxomovies.org/predator-dark-ages-2015/
         plot = p_style_text_align.first.text.strip.delete("\n") # http://axxomovies.org/retreat-2011/ && http://axxomovies.org/jack-irish-bad-debts-2012-10/
 
       elsif p_style_text_align[1].present? && p_style_text_align[1].text.include?("Plot")
@@ -340,12 +339,18 @@ class Movie < ActiveRecord::Base
     url = url.join("-")
 
     self.link = url
+    self.save!
   end
 
   def valid_url?    
     if self.link.blank?
-      self.status = "failed"
+      failed
     end
+  end
+
+  def failed
+    self.status = "failed"
+    self.save!
   end
 
   def imdb_rating

@@ -12,6 +12,7 @@ gem 'nokogiri'
 gem 'binding_of_caller'
 gem 'kaminari'
 gem 'ransack', github: 'activerecord-hackery/ransack'
+gem "font-awesome-rails"
 group :development, :test do
   gem 'byebug', platform: :mri
 end

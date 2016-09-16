@@ -2,4 +2,5 @@
 
 %li
   = search_form_for @search, url: "/visitors", method: :get, class: 'form-inline' do |f|
-    = f.search_field :title_cont, class: 'form-control input-lg', placeholder: "Search Movie"
+    = f.search_field :title_cont, class: 'form-control input-lg search_input', placeholder: "Search Movie"
+    = button_tag "#{content_tag(:i, '', class: 'fa fa-search')}".html_safe, class: 'btn btn-lg search_button'

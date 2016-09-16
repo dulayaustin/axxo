@@ -19,41 +19,32 @@ namespace :axxo do
     print "."
   end
 
-  desc "Populate Movie table in newest movies"
-  task fetch_newest_records: :environment do
-    50.downto(2) do |page_number|
-      movie = MovieScrape.new("http://axxomovies.org/page/#{page_number}/")
-      movie.fetch
-      print "."
-    end
-
-    movie = MovieScrape.new("http://axxomovies.org")
-    movie.fetch
-    print "."
-  end
-
   desc "Populate Movie table with image, torrent, plot, youtube_url and info fields from specific movie link"
   task get_specific_details: :environment do 
-    Movie.valid.with_imdb.find_each do |movie|
+    Movie.pending.find_each do |movie|
+      max_retry = 3
+      tries = 0
       begin
         movie.get_specific_details!
-        movie.has_information?
+        if movie.torrent.include?("axxomovies")
+          raise
+        end
+        movie.has_information?      
         movie.save!
         movie.imdb_rating
         print "."
       rescue
-        print "F"
+        if (tries <= max_retry)
+          movie.trim_link
+          movie.valid_url?
+          tries += 1
+          retry if movie.status = "pending"
+        else
+          movie.failed
+          print "F"
+        end
       end      
     end
   end
 
-  desc "Modify error Movie link"
-  task trim_movie_error_links: :environment do
-    Movie.pending.find_each do |movie|
-      movie.trim_link
-      movie.valid_url?
-      movie.save!
-      print "."
-    end
-  end
 end
