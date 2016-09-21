@@ -15,13 +15,16 @@
           %p
             %strong
               Plot:
-            = @movie.plot
+            = info_value(@movie.plot)
 
           %ul
             %li
               %strong
                 IMDB Link:
-              = link_to @movie.imdb, @movie.imdb
+              - if @movie.imdb.present?
+                = link_to @movie.imdb, @movie.imdb
+              - else
+                None 
             %li
               %strong
                 Genre: 
@@ -30,15 +33,15 @@
             %li
               %strong
                 Size:
-              = @movie.size
+              = info_value(@movie.size)
             %li
               %strong
                 Quality:
-              = @movie.quality
+              = info_value(@movie.quality)
             %li
               %strong
                 Language:
-              = @movie.language
+              = info_value(@movie.language)
 
         .embed-responsive.embed-responsive-16by9
           = embed(@movie.youtube_url)

@@ -21,15 +21,17 @@ module ApplicationHelper
     end    
   end
 
-  def description(info)
-    array = info.split("\n")
-    array.shift
-    array
-  end
-
   def embed(url)
     youtube_url = url.split("?").first
     content_tag(:iframe, nil, src: "#{youtube_url}", allowfullscreen: "true", class: "embed-responsive-item")
+  end
+
+  def info_value(info)
+    if (!info.nil?)
+      content_tag(:span, info)
+    else
+      content_tag(:span, "None")
+    end
   end
 
 end

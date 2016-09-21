@@ -19,7 +19,6 @@ class Movie < ActiveRecord::Base
     self.image = get_source_image
     self.torrent = get_source_torrent
     self.youtube_url = get_source_youtube_url
-    self.status = "passed"
   end
 
   def get_source_image
@@ -339,13 +338,17 @@ class Movie < ActiveRecord::Base
     url = url.join("-")
 
     self.link = url
-    self.save!
+
   end
 
   def valid_url?    
     if self.link.blank?
       failed
     end
+  end
+
+  def passed
+    self.status = "passed"
   end
 
   def failed
@@ -359,7 +362,6 @@ class Movie < ActiveRecord::Base
       doc = Nokogiri::HTML(open(self.imdb))
       imdbRating = doc.css("div.imdbRating")
       self.rating = imdbRating.at_css("span[itemprop='ratingValue']").text.to_f
-      self.save!
     end
   end
 

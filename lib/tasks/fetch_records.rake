@@ -27,18 +27,20 @@ namespace :axxo do
       begin
         movie.get_specific_details!
         if movie.torrent.include?("axxomovies")
+          movie.failed
           raise
         end
-        movie.has_information?      
-        movie.save!
+        movie.has_information?             
         movie.imdb_rating
+        movie.passed
+        movie.save!
         print "."
       rescue
-        if (tries <= max_retry)
-          movie.trim_link
-          movie.valid_url?
+        movie.trim_link
+        movie.valid_url?
+        if (tries <= max_retry) && movie.status == "pending"
           tries += 1
-          retry if movie.status = "pending"
+          retry 
         else
           movie.failed
           print "F"

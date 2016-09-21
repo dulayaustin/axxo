@@ -1,8 +1,8 @@
 .container
   .content
     #display-list
-      - if params[:q]
+      -if params[:q] && params[:q].values.reject(&:blank?).any?      
         %h2
           Search
-          = pluralize(@results.count, 'Result')   
+          = pluralize(@count, 'Result') 
       = render 'movies'  

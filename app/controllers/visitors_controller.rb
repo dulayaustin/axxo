@@ -2,8 +2,8 @@ class VisitorsController < ApplicationController
   before_action :set_search
 
   def index
-    @results = @search.result
-    @results = @results.valid.recent.rating_not_null
+    @results = @search.result.valid.recent
+    @count = @results.count
     @movies = @results.page(params[:page]).per(15)
   end
 
@@ -14,7 +14,7 @@ class VisitorsController < ApplicationController
   def category
     @category = Category.includes(:movies).find_by(name: params[:name])
     @search = @category.movies.ransack(params[:q])
-    @results = @search.result.valid.recent.rating_not_null
+    @results = @search.result.valid.recent
     @movies = @results.page(params[:page]).per(15)
   end
 
